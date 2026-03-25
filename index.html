@@ -1,0 +1,618 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Lite School Management | Group 7</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #eef2f7;
+        }
+        /* Navigation Bar */
+        .navbar {
+            background: #1e2a44;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo {
+            color: white;
+            font-weight: bold;
+            font-size: 1.4rem;
+            padding: 15px 0;
+        }
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: #ddd;
+            text-decoration: none;
+            padding: 15px 18px;
+            display: inline-block;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            border-bottom-color: #4f7df3;
+            background: #2c3e66;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+        .content-panel {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+        }
+        .active-panel {
+            display: block;
+        }
+        h2 {
+            color: #1e2a44;
+            margin-bottom: 20px;
+            border-left: 5px solid #4f7df3;
+            padding-left: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e66;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+        }
+        button {
+            background: #4f7df3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #2c5de0;
+        }
+        .action-btn {
+            background: #eef2ff;
+            color: #1e2a44;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+        }
+        .delete-btn {
+            background: #ff6b6b;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+        }
+        .badge {
+            background: #eef2ff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .member-card {
+            background: #eef2ff;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #f1f5f9;
+            flex: 1;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 15px;
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            border-top: 1px solid #e2e8f0;
+        }
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">🏫 SchoolManager</div>
+    <div class="nav-links">
+        <a class="nav-link active" data-page="dashboard">Dashboard</a>
+        <a class="nav-link" data-page="students">Students</a>
+        <a class="nav-link" data-page="courses">Courses</a>
+        <a class="nav-link" data-page="attendance">Attendance</a>
+        <a class="nav-link" data-page="grades">Grades</a>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Dashboard Panel -->
+    <div id="dashboard" class="content-panel active-panel">
+        <h2>📊 Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-card">👩‍🎓 Total Students: <span id="dashStudents">0</span></div>
+            <div class="stat-card">📚 Total Courses: <span id="dashCourses">0</span></div>
+            <div class="stat-card">📅 Today's Attendance: <span id="dashAttendance">0</span>%</div>
+        </div>
+        <h3>👥 Group 7 Members (scrambled)</h3>
+        <div id="memberContainer" class="member-list"></div>
+        <button id="reshuffleBtn" class="action-btn">🔄 Shuffle Team Order</button>
+        <hr style="margin: 20px 0;">
+        <h3>📌 Recent Activity</h3>
+        <p>Use navigation to manage students, courses, attendance and grades.</p>
+    </div>
+
+    <!-- Students Panel -->
+    <div id="students" class="content-panel">
+        <h2>👩‍🎓 Student Management</h2>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="studentName" placeholder="e.g., Haset Dawit">
+        </div>
+        <div class="form-group">
+            <label>Grade / Class</label>
+            <input type="text" id="studentGrade" placeholder="e.g., Grade 11B">
+        </div>
+        <button id="addStudentBtn">➕ Add Student</button>
+        <div style="margin-top: 25px;">
+            <h3>Student List</h3>
+            <table id="studentTable">
+                <thead><tr><th>Name</th><th>Grade</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Courses Panel -->
+    <div id="courses" class="content-panel">
+        <h2>📚 Course Management</h2>
+        <div class="form-group">
+            <label>Course Name</label>
+            <input type="text" id="courseName" placeholder="e.g., Mathematics">
+        </div>
+        <div class="form-group">
+            <label>Teacher / Code</label>
+            <input type="text" id="courseCode" placeholder="e.g., Mr. Atalay/ MTH101">
+        </div>
+        <button id="addCourseBtn">➕ Add Course</button>
+        <div style="margin-top: 25px;">
+            <h3>Course List</h3>
+            <table id="courseTable">
+                <thead><tr><th>Course</th><th>Teacher/Code</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Attendance Panel -->
+    <div id="attendance" class="content-panel">
+        <h2>📅 Mark Attendance</h2>
+        <div class="form-group">
+            <label>Select Date</label>
+            <input type="date" id="attendanceDate" value="">
+        </div>
+        <div id="attendanceList"></div>
+        <button id="saveAttendanceBtn">💾 Save Attendance</button>
+    </div>
+
+    <!-- Grades Panel -->
+    <div id="grades" class="content-panel">
+        <h2>📝 Manage Grades</h2>
+        <div class="form-group">
+            <label>Select Student</label>
+            <select id="gradeStudentSelect"></select>
+        </div>
+        <div class="form-group">
+            <label>Select Course</label>
+            <select id="gradeCourseSelect"></select>
+        </div>
+        <div class="form-group">
+            <label>Grade (0-100)</label>
+            <input type="number" id="gradeValue" min="0" max="100" step="1">
+        </div>
+        <button id="assignGradeBtn">🎓 Assign Grade</button>
+        <div style="margin-top: 25px;">
+            <h3>Grade Records</h3>
+            <table id="gradeTable">
+                <thead><tr><th>Student</th><th>Course</th><th>Grade</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    🧑‍🏫 Lite School Management System | Group 7 Project – Full features with local storage
+    <p>submit to:M.R enyew</p>
+</div>
+
+<script>
+    // ========================
+    // GROUP MEMBERS (original list)
+    const fullMembers = [
+        "Abubeker Mohammed", "Meron Kitaw", "Fikir Tujar", "Selman Kasim",
+        "Bruktawit", "Haset Dawit", "Kidus Yared", "Hindya Derebew"
+    ];
+
+    // Data storage keys
+    const STORAGE_STUDENTS = "sms_students";
+    const STORAGE_COURSES = "sms_courses";
+    const STORAGE_ATTENDANCE = "sms_attendance";
+    const STORAGE_GRADES = "sms_grades";
+
+    let students = [];
+    let courses = [];
+    let attendanceRecords = []; // array of {date, records: [{studentId, present}]}
+    let grades = []; // array of {studentId, courseId, grade}
+
+    // Helper: generate simple unique id (timestamp based)
+    function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    }
+
+    // Load all data
+    function loadData() {
+        students = JSON.parse(localStorage.getItem(STORAGE_STUDENTS) || "[]");
+        courses = JSON.parse(localStorage.getItem(STORAGE_COURSES) || "[]");
+        attendanceRecords = JSON.parse(localStorage.getItem(STORAGE_ATTENDANCE) || "[]");
+        grades = JSON.parse(localStorage.getItem(STORAGE_GRADES) || "[]");
+    }
+
+    function saveStudents() { localStorage.setItem(STORAGE_STUDENTS, JSON.stringify(students)); }
+    function saveCourses() { localStorage.setItem(STORAGE_COURSES, JSON.stringify(courses)); }
+    function saveAttendance() { localStorage.setItem(STORAGE_ATTENDANCE, JSON.stringify(attendanceRecords)); }
+    function saveGrades() { localStorage.setItem(STORAGE_GRADES, JSON.stringify(grades)); }
+
+    // Render Students Table
+    function renderStudents() {
+        const tbody = document.querySelector("#studentTable tbody");
+        tbody.innerHTML = "";
+        students.forEach((student, idx) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = student.name;
+            row.insertCell(1).innerText = student.grade;
+            const delCell = row.insertCell(2);
+            const delBtn = document.createElement("button");
+            delBtn.innerText = "Delete";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+                students.splice(idx, 1);
+                saveStudents();
+                renderStudents();
+                updateDashboardStats();
+                refreshAttendanceSelectors();
+                refreshGradeSelectors();
+                renderAttendanceUI();  // refresh if open
+                renderGrades();
+            };
+            delCell.appendChild(delBtn);
+        });
+    }
+
+    function renderCourses() {
+        const tbody = document.querySelector("#courseTable tbody");
+        tbody.innerHTML = "";
+        courses.forEach((course, idx) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = course.name;
+            row.insertCell(1).innerText = course.code;
+            const delCell = row.insertCell(2);
+            const delBtn = document.createElement("button");
+            delBtn.innerText = "Delete";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+                courses.splice(idx, 1);
+                saveCourses();
+                renderCourses();
+                updateDashboardStats();
+                refreshGradeSelectors();
+                renderGrades();
+            };
+            delCell.appendChild(delBtn);
+        });
+    }
+
+    // Attendance UI: show list of students with checkboxes for a selected date
+    function renderAttendanceUI() {
+        const container = document.getElementById("attendanceList");
+        if (!container) return;
+        const date = document.getElementById("attendanceDate").value;
+        if (!date) {
+            container.innerHTML = "<p>Please select a date.</p>";
+            return;
+        }
+        if (students.length === 0) {
+            container.innerHTML = "<p>No students enrolled. Add students first.</p>";
+            return;
+        }
+        // find existing record for this date
+        let existing = attendanceRecords.find(rec => rec.date === date);
+        let presentMap = {};
+        if (existing) {
+            existing.records.forEach(rec => { presentMap[rec.studentId] = rec.present; });
+        }
+        let html = '<table><thead><tr><th>Student</th><th>Present</th></tr></thead><tbody>';
+        students.forEach(student => {
+            const checked = presentMap[student.id] ? 'checked' : '';
+            html += `<tr>
+                        <td>${student.name} (${student.grade})</td>
+                        <td><input type="checkbox" class="attendance-check" data-id="${student.id}" ${checked}></td>
+                     </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function saveAttendance() {
+        const date = document.getElementById("attendanceDate").value;
+        if (!date) {
+            alert("Please select a date.");
+            return;
+        }
+        const checkboxes = document.querySelectorAll(".attendance-check");
+        const records = [];
+        checkboxes.forEach(cb => {
+            records.push({
+                studentId: cb.getAttribute("data-id"),
+                present: cb.checked
+            });
+        });
+        // remove old entry for this date
+        const index = attendanceRecords.findIndex(rec => rec.date === date);
+        if (index !== -1) attendanceRecords.splice(index, 1);
+        attendanceRecords.push({ date, records });
+        saveAttendance();
+        alert("Attendance saved!");
+        updateDashboardStats();
+    }
+
+    // Grades
+    function refreshGradeSelectors() {
+        const studentSelect = document.getElementById("gradeStudentSelect");
+        const courseSelect = document.getElementById("gradeCourseSelect");
+        if (!studentSelect || !courseSelect) return;
+        studentSelect.innerHTML = '<option value="">-- Select Student --</option>';
+        students.forEach(s => {
+            studentSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.grade})</option>`;
+        });
+        courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+        courses.forEach(c => {
+            courseSelect.innerHTML += `<option value="${c.id}">${c.name} (${c.code})</option>`;
+        });
+    }
+
+    function renderGrades() {
+        const tbody = document.querySelector("#gradeTable tbody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        grades.forEach((grade, idx) => {
+            const student = students.find(s => s.id === grade.studentId);
+            const course = courses.find(c => c.id === grade.courseId);
+            if (!student || !course) return;
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = student.name;
+            row.insertCell(1).innerText = course.name;
+            row.insertCell(2).innerText = grade.grade;
+            const delCell = row.insertCell(3);
+            const delBtn = document.createElement("button");
+            delBtn.innerText = "Delete";
+            delBtn.className = "delete-btn";
+            delBtn.onclick = () => {
+                grades.splice(idx, 1);
+                saveGrades();
+                renderGrades();
+            };
+            delCell.appendChild(delBtn);
+        });
+    }
+
+    function assignGrade() {
+        const studentId = document.getElementById("gradeStudentSelect").value;
+        const courseId = document.getElementById("gradeCourseSelect").value;
+        const gradeVal = parseFloat(document.getElementById("gradeValue").value);
+        if (!studentId || !courseId || isNaN(gradeVal) || gradeVal < 0 || gradeVal > 100) {
+            alert("Please select student, course and enter grade (0-100).");
+            return;
+        }
+        // check if already exists
+        const existing = grades.find(g => g.studentId === studentId && g.courseId === courseId);
+        if (existing) {
+            if (confirm("Grade already exists. Overwrite?")) {
+                existing.grade = gradeVal;
+                saveGrades();
+                renderGrades();
+            }
+        } else {
+            grades.push({ studentId, courseId, grade: gradeVal, id: generateId() });
+            saveGrades();
+            renderGrades();
+        }
+        document.getElementById("gradeValue").value = "";
+    }
+
+    // Dashboard stats
+    function updateDashboardStats() {
+        document.getElementById("dashStudents").innerText = students.length;
+        document.getElementById("dashCourses").innerText = courses.length;
+        // today's attendance percentage (if any)
+        const today = new Date().toISOString().slice(0,10);
+        const todayRecord = attendanceRecords.find(r => r.date === today);
+        let percent = 0;
+        if (todayRecord && students.length) {
+            const presentCount = todayRecord.records.filter(r => r.present).length;
+            percent = Math.round((presentCount / students.length) * 100);
+        }
+        document.getElementById("dashAttendance").innerText = percent;
+    }
+
+    // Scramble members in dashboard
+    function scrambleMembers() {
+        const shuffled = [...fullMembers];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const container = document.getElementById("memberContainer");
+        container.innerHTML = "";
+        shuffled.forEach(m => {
+            const span = document.createElement("span");
+            span.className = "member-card";
+            span.innerText = m;
+            container.appendChild(span);
+        });
+    }
+
+    // Helper to refresh dependent UIs when data changes
+    function refreshAttendanceSelectors() {
+        renderAttendanceUI();
+    }
+
+    // Navigation handling (single page)
+    function showPage(pageId) {
+        document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active-panel'));
+        document.getElementById(pageId).classList.add('active-panel');
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        document.querySelector(`.nav-link[data-page="${pageId}"]`).classList.add('active');
+        // refresh data when switching to certain tabs
+        if (pageId === 'attendance') {
+            renderAttendanceUI();
+        }
+        if (pageId === 'grades') {
+            refreshGradeSelectors();
+            renderGrades();
+        }
+        if (pageId === 'dashboard') updateDashboardStats();
+    }
+
+    // Add Student
+    document.getElementById("addStudentBtn")?.addEventListener("click", () => {
+        const name = document.getElementById("studentName").value.trim();
+        const grade = document.getElementById("studentGrade").value.trim();
+        if (!name || !grade) { alert("Please fill name and grade."); return; }
+        const newStudent = { id: generateId(), name, grade };
+        students.push(newStudent);
+        saveStudents();
+        renderStudents();
+        updateDashboardStats();
+        refreshAttendanceSelectors();
+        refreshGradeSelectors();
+        document.getElementById("studentName").value = "";
+        document.getElementById("studentGrade").value = "";
+    });
+
+    document.getElementById("addCourseBtn")?.addEventListener("click", () => {
+        const name = document.getElementById("courseName").value.trim();
+        const code = document.getElementById("courseCode").value.trim();
+        if (!name || !code) { alert("Please fill course name and teacher/code."); return; }
+        const newCourse = { id: generateId(), name, code };
+        courses.push(newCourse);
+        saveCourses();
+        renderCourses();
+        updateDashboardStats();
+        refreshGradeSelectors();
+        document.getElementById("courseName").value = "";
+        document.getElementById("courseCode").value = "";
+    });
+
+    document.getElementById("saveAttendanceBtn")?.addEventListener("click", saveAttendance);
+    document.getElementById("assignGradeBtn")?.addEventListener("click", assignGrade);
+    document.getElementById("reshuffleBtn")?.addEventListener("click", scrambleMembers);
+    document.getElementById("attendanceDate")?.addEventListener("change", renderAttendanceUI);
+
+    // Navigation click listeners
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const page = link.getAttribute('data-page');
+            if (page) showPage(page);
+        });
+    });
+
+    // initial load
+    loadData();
+    // if no data, add some demo students & courses for a better experience
+    if (students.length === 0) {
+        students = [
+            { id: generateId(), name: "Abubeker Mohammed", grade: "Grade 11B" },
+            { id: generateId(), name: "Haset Dawit", grade: "Grade 11B" }
+        ];
+        saveStudents();
+    }
+    if (courses.length === 0) {
+        courses = [
+            { id: generateId(), name: "Mathematics", code: "MATH101" },
+            { id: generateId(), name: "English", code: "ENG202" }
+        ];
+        saveCourses();
+    }
+    renderStudents();
+    renderCourses();
+    updateDashboardStats();
+    scrambleMembers();
+    refreshGradeSelectors();
+    renderGrades();
+    renderAttendanceUI();
+</script>
+</body>
+</html>
